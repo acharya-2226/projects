@@ -1,6 +1,10 @@
 import pygame
 import random
 import sys
+import os
+
+# Set the working directory to the script's location
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 # Initialize pygame
 pygame.init()
@@ -37,22 +41,21 @@ enemies = []
 asteroids = []
 powerups = []
 
-
 # Load images
 player_ship = pygame.image.load("fighter_plane.png")  # Load custom image for player
 player_ship = pygame.transform.scale(player_ship, (50, 50))  # Scale it to the desired size
 
-enemy_ship = pygame.image.load("enemy_plane.png")  # Assuming you have an enemy image
+enemy_ship = pygame.image.load("enemy_plane.png")
 enemy_ship = pygame.transform.scale(enemy_ship, (40, 40))
 
-asteroid = pygame.image.load("asteroid.png")  # Assuming you have an asteroid image
+asteroid = pygame.image.load("asteroid.png")
 asteroid = pygame.transform.scale(asteroid, (30, 30))
 
-powerup_item = pygame.image.load("powerup.png")  # Assuming you have a power-up image
+powerup_item = pygame.image.load("powerup.png")
 powerup_item = pygame.transform.scale(powerup_item, (20, 20))
 
-background = pygame.image.load("space.png")  # Load the background image
-background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))  # Scale to screen size
+background = pygame.image.load("space.png")
+background = pygame.transform.scale(background, (SCREEN_WIDTH, SCREEN_HEIGHT))
 
 # Clock object
 clock = pygame.time.Clock()
@@ -94,15 +97,15 @@ def move_bullets():
         bullet.y -= bullet_speed
         if bullet.y < 0:
             bullets.remove(bullet)
-        
+
         # Check collision with enemies
         for enemy in enemies[:]:
             if bullet.colliderect(enemy):
-                score += 10
+                score += 1
                 enemies.remove(enemy)
                 bullets.remove(bullet)
                 break
-        
+
         # Check collision with asteroids
         for asteroid_obj in asteroids[:]:
             if bullet.colliderect(asteroid_obj):
@@ -112,7 +115,7 @@ def move_bullets():
 
 # Enemy movement
 def move_enemies():
-    global score, lives
+    global lives
     for enemy in enemies[:]:
         enemy.y += enemy_speed
         if enemy.y > SCREEN_HEIGHT:
@@ -124,7 +127,7 @@ def move_asteroids():
     global lives
     for asteroid_obj in asteroids[:]:
         asteroid_obj.y += asteroid_speed
-        if asteroid_obj.y > SCREEN_HEIGHT: 
+        if asteroid_obj.y > SCREEN_HEIGHT:
             asteroids.remove(asteroid_obj)
             lives -= 1
 
@@ -154,28 +157,13 @@ def generate_powerup():
 def restart_game():
     global score, lives, level, player_x, bullets, enemies, asteroids, powerups
     score = 0
-    lives = 3
+    lives = 10
     level = 1
     player_x = SCREEN_WIDTH // 2
     bullets = []
     enemies = []
     asteroids = []
     powerups = []
-
-# Draw restart button
-def draw_restart_button():
-    button_rect = pygame.Rect(SCREEN_WIDTH // 2 - 100, SCREEN_HEIGHT // 2 + 50, 200, 50)
-    pygame.draw.rect(screen, GREEN, button_rect)
-    draw_text("Restart", FONT, WHITE, screen, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 75)
-    return button_rect
-
-# Check if the mouse clicked on the restart button
-def check_restart_button_click(button_rect):
-    mouse_x, mouse_y = pygame.mouse.get_pos()
-    mouse_pressed = pygame.mouse.get_pressed()
-    if button_rect.collidepoint(mouse_x, mouse_y) and mouse_pressed[0]:
-        return True
-    return False
 
 # Main game loop
 def main():
@@ -187,18 +175,13 @@ def main():
     powerup_timer = 0
 
     while True:
-        screen.fill(BLACK)
+        screen.blit(background, (0, 0))
 
         # Event handling
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-                sys.exit()  # Exit the game properly when the close button is clicked.
-            elif event.type == pygame.KEYDOWN:
-                # Handle 'Q' key to quit the game if needed
-                if event.key == pygame.K_q:
-                    pygame.quit()
-                    sys.exit()
+                sys.exit()
 
         # Key press handling
         keys = pygame.key.get_pressed()
@@ -246,13 +229,12 @@ def main():
         if lives <= 0:
             draw_text("GAME OVER!", FONT, RED, screen, SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
             pygame.display.flip()
-            pygame.time.wait(3000)  # Wait for 3 seconds before quitting
+            pygame.time.wait(3000)
             pygame.quit()
             sys.exit()
 
         pygame.display.flip()
         clock.tick(60)
 
-  
 if __name__ == "__main__":
     main()
