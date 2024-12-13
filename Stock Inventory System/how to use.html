@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Management System - User Manual</title>
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to right, #ff7e5f, #feb47b);
+      color: #333;
+      line-height: 1.6;
+      margin: 20px;
+    }
+
+    header {
+      background: linear-gradient(to right, #2c3e50, #16a085);
+      color: white;
+      text-align: center;
+      padding: 40px 0;
+      margin: 0 auto;
+      width: 80%;
+      border-radius: 8px;
+    }
+
+    header h1 {
+      font-size: 3em;
+      font-weight: 600;
+    }
+
+    header p {
+      font-size: 1.2em;
+      margin-top: 10px;
+    }
+
+    nav {
+      background-color: #34495e;
+      display: flex;
+      justify-content: center;
+      padding: 15px;
+      border-radius: 0 0 10px 10px;
+      width: 80%;
+      margin: 20px auto;
+    }
+
+    nav a {
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-size: 1.1em;
+      margin: 0 10px;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+
+    nav a:hover {
+      background-color: #16a085;
+    }
+
+    .container {
+      width: 85%;
+      max-width: 1200px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      background: linear-gradient(to right, #f9f9f9, #ffffff);
+    }
+
+    .section-title {
+      font-size: 2.2em;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      border-bottom: 3px solid #16a085;
+      padding-bottom: 10px;
+    }
+
+    .subsection-title {
+      font-size: 1.5em;
+      color: #2980b9;
+      margin-top: 30px;
+      font-weight: 600;
+    }
+
+    .list {
+      margin-top: 20px;
+      padding-left: 20px;
+    }
+
+    .list-item {
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .example-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 30px;
+    }
+
+    .example-table th,
+    .example-table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .example-table th {
+      background-color: #f2f2f2;
+      color: #2c3e50;
+    }
+
+    .example-table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    footer {
+      background: linear-gradient(to right, #34495e, #16a085);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      width: 80%;
+      margin: 40px auto 0;
+      border-radius: 10px 10px 0 0;
+    }
+
+    /* Ensure proper page size and margin for PDF conversion */
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+
+    /* Media query for smaller screens, adjusting font sizes */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2em;
+      }
+
+      nav a {
+        padding: 8px 15px;
+        font-size: 1em;
+      }
+
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+
+      .section-title {
+        font-size: 1.8em;
+      }
+
+      .subsection-title {
+        font-size: 1.3em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Inventory Management System</h1>
+    <p>User Manual</p>
+  </header>
+
+  <nav>
+    <a href="#overview">Overview</a>
+    <a href="#sheet2">Sheet2: Item List</a>
+    <a href="#sheet1">Sheet1: Stock Updates</a>
+    <a href="#sheet3">Sheet3: Net Stock</a>
+    <a href="#updates">How to Update</a>
+  </nav>
+
+  <div class="container">
+    <section id="overview">
+      <h2 class="section-title">Overview</h2>
+      <p>The Inventory Management System is an Excel-based tool consisting of three key worksheets. It is designed to
+        help you efficiently manage and track your inventory, calculate stock quantities, credits, and debits. The
+        system automatically updates based on your inputs.</p>
+      <p>The following sections describe how each worksheet works and how to use them effectively.</p>
+    </section>
+
+    <section id="sheet2">
+      <h2 class="section-title">1. Sheet2: Item List (Core of Stock Management)</h2>
+      <h3 class="subsection-title">Purpose</h3>
+      <p>Sheet2 serves as the foundation of your inventory system. It contains a list of all your items, including
+        unique Item Codes and their corresponding Item Names. This sheet feeds information into Sheet1 (where you enter
+        stock transactions) and Sheet3 (where stock summaries are calculated).</p>
+
+      <h3 class="subsection-title">How to Use</h3>
+      <h4 class="subsection-title">Updating the Item List</h4>
+      <ul class="list">
+        <li class="list-item">Item Code: A unique identifier for each product in your inventory (e.g., 4001 for Product
+          A).</li>
+        <li class="list-item">Item Name: The name of the product associated with the Item Code (e.g., Product A).</li>
+      </ul>
+
+      <h4 class="subsection-title">Example</h4>
+      <table class="example-table">
+        <thead>
+          <tr>
+            <th>Item Code</th>
+            <th>Item Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>4001</td>
+            <td>Product A</td>
+          </tr>
+          <tr>
+            <td>4002</td>
+            <td>Product B</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="sheet1">
+      <h2 class="section-title">2. Sheet1: Data Entry and Stock Updates</h2>
+      <h3 class="subsection-title">Purpose</h3>
+      <p>Sheet1 is where you record stock updates, including the addition (credit) or removal (debit) of items from your
+        inventory. You will enter transactions such as item purchases, sales, or stock adjustments.</p>
+
+      <h3 class="subsection-title">How to Use</h3>
+      <ul class="list">
+        <li class="list-item"><strong>Item Code & Item Name:</strong> Use the dropdown menu in the Item Code column,
+          which is populated from Sheet2.</li>
+        <li class="list-item"><strong>Transaction Details:</strong> Enter the Type (Credit or Debit), Quantity, and Date
+          of the transaction.</li>
+        <li class="list-item"><strong>Automatic Calculations:</strong> The system will automatically calculate the
+          Credited or Debited amounts based on the transaction type.</li>
+      </ul>
+    </section>
+
+    <section id="sheet3">
+      <h2 class="section-title">3. Sheet3: Net Stock Summary</h2>
+      <h3 class="subsection-title">Purpose</h3>
+      <p>Sheet3 summarizes your net stock levels after incorporating data from Sheet1. It shows the net stock for each
+        item based on the transactions recorded.</p>
+    </section>
+
+    <section id="updates">
+      <h2 class="section-title">How to Update the System</h2>
+      <p>To keep the system accurate and up-to-date, regularly input stock transactions and update the item list as new
+        products are added to your inventory. Follow these steps:</p>
+      <ul class="list">
+        <li class="list-item">Add new items to Sheet2 as they arrive in your inventory.</li>
+        <li class="list-item">Record every stock transaction in Sheet1 to keep track of your inventory changes.</li>
+        <li class="list-item">Review the net stock summary in Sheet3 to evaluate stock levels and make informed
+          decisions.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer>
+    <p>&copy; 2024 Inventory Management System. All Rights Reserved.</p>
+  </footer>
+</body>
+
+</html>
