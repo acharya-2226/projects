@@ -7,20 +7,26 @@ pygame.init()
 # Game Constants
 WIDTH, HEIGHT = 800, 600
 FPS = 60
-CAR_WIDTH, CAR_HEIGHT = 60, 30  # Set the desired car width and height
-
+CAR_WIDTH, CAR_HEIGHT = 60, 30
+ZOMBIE_SIZE = 50
+LANES = [100, 200, 300, 400, 500]
 
 # Colors
 WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+CYAN = (0, 255, 255)
+YELLOW = (255, 255, 0)
 
 # Load background image
 background = pygame.image.load('background.jpg')
-background = pygame.transform.scale(background, (WIDTH, HEIGHT))  # Resize to fit screen
+background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
-# Load car images and resize them
+# Load car images
 car_images = [pygame.transform.scale(pygame.image.load(f'car{i}.png'), (CAR_WIDTH, CAR_HEIGHT)) for i in range(1, 7)]
 
-# Create the game screen
+# Create game screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Road Crossing Zombie")
 
@@ -30,8 +36,8 @@ clock = pygame.time.Clock()
 class Zombie(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((0, 255, 0))  # Zombie color (green)
+        self.image = pygame.Surface((ZOMBIE_SIZE, ZOMBIE_SIZE))
+        self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - 50)
         self.speed = 5
@@ -49,17 +55,16 @@ class Zombie(pygame.sprite.Sprite):
 class Vehicle(pygame.sprite.Sprite):
     def __init__(self, lane, speed):
         super().__init__()
-        self.image = random.choice(car_images)  # Randomly select a car image
+        self.image = random.choice(car_images)
         self.rect = self.image.get_rect()
-        self.rect.x = WIDTH  # Start vehicles from the right side of the screen
+        self.rect.x = WIDTH
         self.rect.y = lane
         self.speed = speed
 
     def update(self):
-        self.rect.x -= self.speed  # Move vehicles to the left
-        if self.rect.x + self.rect.width < 0:  # Reset position when vehicle leaves screen
-            self.rect.x = WIDTH
-            self.rect.y = random.randint(100, 400)  # Randomize lane again
+        self.rect.x -= self.speed
+        if self.rect.right < 0:
+            self.kill()
 
 class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y, type):
@@ -67,27 +72,31 @@ class PowerUp(pygame.sprite.Sprite):
         self.type = type
         self.image = pygame.Surface((30, 30))
         if type == "health":
-            self.image.fill((0, 255, 255))  # Health pack (cyan)
+            self.image.fill(CYAN)
         elif type == "speed":
-            self.image.fill((255, 255, 0))  # Speed boost (yellow)
+            self.image.fill(YELLOW)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
     def update(self):
-        # Scroll down to simulate falling power-ups
         self.rect.y += 2
-        if self.rect.y > HEIGHT:
-            self.kill()  # Remove from the game when it goes off-screen
-
+        if self.rect.top > HEIGHT:
+            self.kill()
 
 def check_collisions(zombie, vehicles, powerups):
     if pygame.sprite.spritecollide(zombie, vehicles, False):
-        return True  # Game Over (Zombie hit a vehicle)
+        return True
     for powerup in powerups:
         if pygame.sprite.collide_rect(zombie, powerup):
-            return powerup.type  # Return power-up type collected
+            powerup.kill()
+            return powerup.type
     return None
+
+def display_text(text, size, color, x, y):
+    font = pygame.font.Font(None, size)
+    render = font.render(text, True, color)
+    screen.blit(render, (x, y))
 
 def main():
     zombie = Zombie()
@@ -97,13 +106,11 @@ def main():
 
     score = 0
     level = 1
+    vehicle_spawn_rate = 0.02
+    powerup_spawn_rate = 0.01
 
-    # Game loop
     running = True
     while running:
-        screen.fill(WHITE)
-        
-        # Draw background image
         screen.blit(background, (0, 0))
 
         # Handle events
@@ -111,53 +118,53 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-        # Get user input
         keys = pygame.key.get_pressed()
-
-        # Manually update the zombie sprite with keys
         zombie.update(keys)
 
         # Add vehicles and power-ups dynamically
-        if random.random() < 0.02:  # Random chance to spawn vehicles
-            lane = random.randint(100, 400)
-            speed = random.randint(3, 6)
+        if random.random() < vehicle_spawn_rate:
+            lane = random.choice(LANES)
+            speed = random.randint(3 + level, 6 + level)
             vehicle = Vehicle(lane, speed)
             vehicles.add(vehicle)
             all_sprites.add(vehicle)
 
-        if random.random() < 0.01:  # Random chance for power-up
-            powerup = PowerUp(random.choice([100, 300, 500, 700]), 0, random.choice(["health", "speed"]))
+        if random.random() < powerup_spawn_rate:
+            x = random.randint(0, WIDTH - 30)
+            powerup = PowerUp(x, 0, random.choice(["health", "speed"]))
             powerups.add(powerup)
             all_sprites.add(powerup)
 
-        # Update all other sprites (not the zombie)
-        for vehicle in vehicles:
-            vehicle.update()
-        for powerup in powerups:
-            powerup.update()
+        # Update vehicles and power-ups
+        vehicles.update()
+        powerups.update()
 
         # Check collisions
         collision_result = check_collisions(zombie, vehicles, powerups)
         if collision_result == True:
-            print("Game Over!")
+            display_text("Game Over!", 64, RED, WIDTH // 2 - 150, HEIGHT // 2)
+            pygame.display.flip()
+            pygame.time.wait(2000)
             running = False
         elif collision_result == "health":
             score += 10
         elif collision_result == "speed":
             zombie.speed += 2
 
-        # Draw everything
+        # Increase difficulty with score
+        if score // 50 > level - 1:
+            level += 1
+            vehicle_spawn_rate += 0.005
+
+        # Draw all sprites
         all_sprites.draw(screen)
 
-        # Display score at the top
-        font = pygame.font.Font(None, 36)
-        score_text = font.render(f"Score: {score}", True, (0, 0, 0))
-        screen.blit(score_text, (10, 10))
+        # Display score and level
+        display_text(f"Score: {score}", 36, BLACK, 10, 10)
+        display_text(f"Level: {level}", 36, BLACK, 10, 50)
 
         # Update display
         pygame.display.flip()
-
-        # Set frame rate
         clock.tick(FPS)
 
     pygame.quit()
