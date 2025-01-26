@@ -8,7 +8,8 @@ pygame.init()
 WIDTH, HEIGHT = 800, 600
 FPS = 60
 CAR_WIDTH, CAR_HEIGHT = 60, 30
-ZOMBIE_SIZE = 50
+ZOMBIE_SIZE = 50  # Scale up by 3 times
+POWERUP_SIZE = 30  # Scale up by 3 times
 LANES = [100, 200, 300, 400, 500]
 
 # Colors
@@ -26,6 +27,12 @@ background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 # Load car images
 car_images = [pygame.transform.scale(pygame.image.load(f'car{i}.png'), (CAR_WIDTH, CAR_HEIGHT)) for i in range(1, 7)]
 
+# Load zombie image
+zombie_image = pygame.transform.scale(pygame.image.load('zombie.png'), (ZOMBIE_SIZE, ZOMBIE_SIZE))
+
+# Load power-up image
+powerup_image = pygame.transform.scale(pygame.image.load('powerup.png'), (POWERUP_SIZE, POWERUP_SIZE))
+
 # Create game screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Road Crossing Zombie")
@@ -36,8 +43,7 @@ clock = pygame.time.Clock()
 class Zombie(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.Surface((ZOMBIE_SIZE, ZOMBIE_SIZE))
-        self.image.fill(GREEN)
+        self.image = zombie_image
         self.rect = self.image.get_rect()
         self.rect.center = (WIDTH // 2, HEIGHT - 50)
         self.speed = 5
@@ -70,11 +76,11 @@ class PowerUp(pygame.sprite.Sprite):
     def __init__(self, x, y, type):
         super().__init__()
         self.type = type
-        self.image = pygame.Surface((30, 30))
+        self.image = powerup_image.copy()
         if type == "health":
-            self.image.fill(CYAN)
+            self.image.fill(CYAN, special_flags=pygame.BLEND_ADD)
         elif type == "speed":
-            self.image.fill(YELLOW)
+            self.image.fill(YELLOW, special_flags=pygame.BLEND_ADD)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -130,7 +136,7 @@ def main():
             all_sprites.add(vehicle)
 
         if random.random() < powerup_spawn_rate:
-            x = random.randint(0, WIDTH - 30)
+            x = random.randint(0, WIDTH - POWERUP_SIZE)
             powerup = PowerUp(x, 0, random.choice(["health", "speed"]))
             powerups.add(powerup)
             all_sprites.add(powerup)
