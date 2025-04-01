@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProMark Editor - Your Smart Text Companion</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        dark: '#1F2937',
+                        light: '#F9FAFB'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --sidebar-width: 280px;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-50 text-gray-800;
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            @apply bg-primary text-white h-screen fixed left-0 top-0 overflow-y-auto transition-all;
+        }
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            @apply p-8 transition-all;
+        }
+        
+        .file-item {
+            @apply p-3 rounded-lg mb-2 cursor-pointer transition-all hover:bg-blue-600 flex items-center;
+        }
+        
+        .file-item.active {
+            @apply bg-blue-700 font-medium;
+        }
+        
+        .ql-container {
+            @apply h-96 border-none;
+        }
+        
+        .ql-toolbar {
+            @apply rounded-t-lg border-none bg-gray-100;
+        }
+        
+        .content-block {
+            @apply p-4 bg-white rounded-lg shadow-sm mb-4 border-l-4 border-secondary;
+        }
+        
+        .spinner {
+            @apply w-8 h-8 border-4 border-t-primary border-r-primary border-b-primary border-l-transparent rounded-full animate-spin;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 50;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Menu Button -->
+    <div class="md:hidden fixed top-4 left-4 z-50">
+        <button id="menu-toggle" class="p-2 rounded-lg bg-primary text-white">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <div class="p-6">
+            <div class="flex items-center mb-8">
+                <i class="fas fa-bookmark text-2xl mr-3"></i>
+                <h1 class="text-2xl font-bold">ProMark</h1>
+            </div>
+            
+            <div class="mb-6">
+                <button id="new-file-btn" class="w-full py-2 px-4 bg-secondary hover:bg-green-600 rounded-lg text-white font-medium transition-all flex items-center justify-center">
+                    <i class="fas fa-plus mr-2"></i> New File
+                </button>
+            </div>
+            
+            <div class="mb-4 flex justify-between items-center">
+                <h3 class="font-semibold text-lg">Your Documents</h3>
+                <button id="refresh-files" class="text-gray-200 hover:text-white">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <div id="file-list" class="mb-6">
+                <!-- Files will be loaded here -->
+                <div id="loading-files" class="flex justify-center py-8">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            
+            <div class="text-sm text-blue-200 mt-auto pt-6 border-t border-blue-400">
+                <p>ProMark Editor v1.0</p>
+                <p class="mt-1">All your ideas in one place</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        <div id="editor-header" class="mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="current-file-title" class="text-2xl font-bold text-dark">Select or create a file</h2>
+                <div class="flex space-x-3">
+                    <button id="save-btn" class="px-4 py-2 bg-secondary hover:bg-green-600 text-white rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all" disabled>
+                        <i class="fas fa-save mr-2"></i> Save
+                    </button>
+                    <button id="export-btn" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all" disabled>
+                        <i class="fas fa-file-export mr-2"></i> Export
+                    </button>
+                </div>
+            </div>
+            
+            <div id="file-info" class="text-sm text-gray-500 flex items-center">
+                <span id="last-saved" class="mr-3">Last saved: --</span>
+                <span id="word-count">Words: 0</span>
+            </div>
+        </div>
+        
+        <!-- Rich Text Editor -->
+        <div id="editor-container" class="bg-white rounded-lg shadow-sm mb-8 overflow-hidden">
+            <div id="quill-toolbar">
+                <div class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1">Heading 1</option>
+                        <option value="2">Heading 2</option>
+                        <option selected>Normal</option>
+                    </select>
+                </div>
+                <div class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                </div>
+                <div class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </div>
+                <div class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                </div>
+                <div class="ql-formats">
+                    <button class="ql-clean"></button>
+                </div>
+            </div>
+            <div id="editor"></div>
+        </div>
+        
+        <!-- Content Preview -->
+        <div id="preview-section" class="hidden">
+            <h3 class="text-xl font-semibold mb-4">Preview</h3>
+            <div id="content-preview" class="space-y-4">
+                <!-- Content blocks will appear here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- New File Modal -->
+    <div id="new-file-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 w-full max-w-md">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold">Create New File</h3>
+                <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">File Name</label>
+                <input type="text" id="new-filename" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" placeholder="e.g., my-notes.txt">
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button id="cancel-new-file" class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg">Cancel</button>
+                <button id="confirm-new-file" class="px-4 py-2 bg-primary hover:bg-blue-600 text-white rounded-lg">Create</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Quill editor
+        const quill = new Quill('#editor', {
+            theme: 'snow',
+            placeholder: 'Start writing your masterpiece here...',
+            modules: {
+                toolbar: '#quill-toolbar'
+            }
+        });
+        
+        // DOM Elements
+        const elements = {
+            sidebar: document.getElementById('sidebar'),
+            menuToggle: document.getElementById('menu-toggle'),
+            fileList: document.getElementById('file-list'),
+            loadingFiles: document.getElementById('loading-files'),
+            currentFileTitle: document.getElementById('current-file-title'),
+            saveBtn: document.getElementById('save-btn'),
+            exportBtn: document.getElementById('export-btn'),
+            lastSaved: document.getElementById('last-saved'),
+            wordCount: document.getElementById('word-count'),
+            previewSection: document.getElementById('preview-section'),
+            contentPreview: document.getElementById('content-preview'),
+            newFileBtn: document.getElementById('new-file-btn'),
+            newFileModal: document.getElementById('new-file-modal'),
+            closeModal: document.getElementById('close-modal'),
+            cancelNewFile: document.getElementById('cancel-new-file'),
+            confirmNewFile: document.getElementById('confirm-new-file'),
+            newFilename: document.getElementById('new-filename'),
+            refreshFiles: document.getElementById('refresh-files')
+        };
+        
+        // State
+        let state = {
+            currentFile: null,
+            files: [],
+            unsavedChanges: false
+        };
+        
+        // Event Listeners
+        elements.menuToggle?.addEventListener('click', toggleSidebar);
+        elements.saveBtn.addEventListener('click', saveCurrentFile);
+        elements.exportBtn.addEventListener('click', exportCurrentFile);
+        elements.newFileBtn.addEventListener('click', showNewFileModal);
+        elements.closeModal.addEventListener('click', hideNewFileModal);
+        elements.cancelNewFile.addEventListener('click', hideNewFileModal);
+        elements.confirmNewFile.addEventListener('click', createNewFile);
+        elements.refreshFiles.addEventListener('click', loadFiles);
+        
+        // Quill content change handler
+        quill.on('text-change', () => {
+            updateWordCount();
+            if (state.currentFile) {
+                state.unsavedChanges = true;
+                elements.saveBtn.disabled = false;
+            }
+        });
+        
+        // Initialize
+        loadFiles();
+        
+        // Functions
+        function toggleSidebar() {
+            elements.sidebar.classList.toggle('open');
+        }
+        
+        async function loadFiles() {
+            elements.loadingFiles.classList.remove('hidden');
+            elements.fileList.innerHTML = '';
+            
+            try {
+                // Simulate API call
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Mock data - in a real app, you'd fetch from your backend
+                state.files = [
+                    { name: 'notes.txt', lastModified: '2023-06-15T10:30:00' },
+                    { name: 'ideas.md', lastModified: '2023-06-14T15:45:00' },
+                    { name: 'project-plan.txt', lastModified: '2023-06-10T09:20:00' }
+                ];
+                
+                renderFileList();
+            } catch (error) {
+                console.error('Failed to load files:', error);
+                elements.fileList.innerHTML = '<p class="text-red-200">Failed to load files</p>';
+            } finally {
+                elements.loadingFiles.classList.add('hidden');
+            }
+        }
+        
+        function renderFileList() {
+            elements.fileList.innerHTML = '';
+            
+            if (state.files.length === 0) {
+                elements.fileList.innerHTML = '<p class="text-blue-200 text-center py-4">No files found</p>';
+                return;
+            }
+            
+            state.files.forEach(file => {
+                const fileItem = document.createElement('div');
+                fileItem.className = `file-item ${state.currentFile?.name === file.name ? 'active' : ''}`;
+                fileItem.innerHTML = `
+                    <i class="far fa-file-alt mr-3"></i>
+                    <span class="truncate">${file.name}</span>
+                    <span class="ml-auto text-xs opacity-70">${formatDate(file.lastModified)}</span>
+                `;
+                
+                fileItem.addEventListener('click', () => loadFile(file));
+                elements.fileList.appendChild(fileItem);
+            });
+        }
+        
+        async function loadFile(file) {
+            if (state.unsavedChanges && !confirm('You have unsaved changes. Continue without saving?')) {
+                return;
+            }
+            
+            state.currentFile = file;
+            state.unsavedChanges = false;
+            
+            // Update UI
+            elements.currentFileTitle.textContent = file.name;
+            elements.saveBtn.disabled = true;
+            elements.exportBtn.disabled = false;
+            elements.lastSaved.textContent = `Last saved: ${formatDate(file.lastModified)}`;
+            
+            // Highlight active file in sidebar
+            document.querySelectorAll('.file-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelectorAll('.file-item').forEach(item => {
+                if (item.textContent.includes(file.name)) {
+                    item.classList.add('active');
+                }
+            });
+            
+            try {
+                // Simulate loading file content
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Mock content - in a real app, you'd fetch from your backend
+                const mockContent = {
+                    'notes.txt': '<h1>My Notes</h1><p>These are my important notes.</p>',
+                    'ideas.md': '# Project Ideas\n\n1. Build a new app\n2. Write a book\n3. Learn a language',
+                    'project-plan.txt': '## Project Timeline\n\n- Week 1: Research\n- Week 2: Prototype\n- Week 3: Test'
+                };
+                
+                const content = mockContent[file.name] || '<p>New file</p>';
+                quill.root.innerHTML = content;
+                updateWordCount();
+                renderContentPreview(content);
+                elements.previewSection.classList.remove('hidden');
+            } catch (error) {
+                console.error('Failed to load file:', error);
+                alert('Failed to load file content');
+            }
+        }
+        
+        async function saveCurrentFile() {
+            if (!state.currentFile) return;
+            
+            try {
+                // Simulate saving
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Update state
+                state.currentFile.lastModified = new Date().toISOString();
+                state.unsavedChanges = false;
+                elements.saveBtn.disabled = true;
+                elements.lastSaved.textContent = `Last saved: ${formatDate(state.currentFile.lastModified)}`;
+                
+                // In a real app, you would send the content to your backend here
+                const content = quill.root.innerHTML;
+                console.log('Saving content:', content);
+                
+                alert('File saved successfully!');
+                renderFileList();
+            } catch (error) {
+                console.error('Failed to save file:', error);
+                alert('Failed to save file');
+            }
+        }
+        
+        function exportCurrentFile() {
+            if (!state.currentFile) return;
+            
+            const content = quill.getText();
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = state.currentFile.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        function updateWordCount() {
+            const text = quill.getText().trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            elements.wordCount.textContent = `Words: ${words}`;
+        }
+        
+        function renderContentPreview(content) {
+            elements.contentPreview.innerHTML = '';
+            
+            // Simple parsing - in a real app you might use a markdown parser or more sophisticated HTML parsing
+            const blocks = content.split('</p>').filter(block => block.trim().length > 0);
+            
+            blocks.forEach((block, index) => {
+                const blockDiv = document.createElement('div');
+                blockDiv.className = 'content-block';
+                
+                // Extract clean text (remove HTML tags)
+                const cleanText = block.replace(/<[^>]*>/g, '').trim();
+                if (!cleanText) return;
+                
+                blockDiv.innerHTML = `
+                    <h4 class="font-medium mb-2">Section ${index + 1}</h4>
+                    <div class="text-gray-700">${cleanText}</div>
+                `;
+                
+                elements.contentPreview.appendChild(blockDiv);
+            });
+        }
+        
+        function showNewFileModal() {
+            elements.newFileModal.classList.remove('hidden');
+            elements.newFilename.focus();
+        }
+        
+        function hideNewFileModal() {
+            elements.newFileModal.classList.add('hidden');
+            elements.newFilename.value = '';
+        }
+        
+        function createNewFile() {
+            const filename = elements.newFilename.value.trim();
+            if (!filename) {
+                alert('Please enter a file name');
+                return;
+            }
+            
+            // Simple validation
+            if (!/^[\w\-\. ]+$/.test(filename)) {
+                alert('File name can only contain letters, numbers, spaces, hyphens, underscores and dots');
+                return;
+            }
+            
+            // Add extension if missing
+            const finalFilename = filename.includes('.') ? filename : `${filename}.txt`;
+            
+            // Check if file already exists
+            if (state.files.some(file => file.name === finalFilename)) {
+                alert('A file with this name already exists');
+                return;
+            }
+            
+            // Create new file
+            const newFile = {
+                name: finalFilename,
+                lastModified: new Date().toISOString()
+            };
+            
+            state.files.unshift(newFile);
+            renderFileList();
+            loadFile(newFile);
+            hideNewFileModal();
+        }
+        
+        function formatDate(isoString) {
+            if (!isoString) return '--';
+            const date = new Date(isoString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
+</body>
+</html>
