@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LearnSphere - LMS</title>
+  <title>Login - LearnSphere LMS</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
       background: #f4f6f8;
-      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
 
     header {
@@ -25,27 +27,65 @@
       font-size: 2.5rem;
     }
 
-    header p {
-      font-size: 1.2rem;
-      margin-top: 0.5rem;
-    }
-
-    section {
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 2rem;
-      max-width: 1000px;
-      margin: auto;
     }
 
-    .highlight {
+    .login-box {
       background: white;
-      padding: 2rem;
+      padding: 2rem 3rem;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-      margin-top: 2rem;
+      width: 100%;
+      max-width: 400px;
     }
 
-    .highlight h2 {
+    .login-box h2 {
+      margin-bottom: 1.5rem;
       color: #1e88e5;
+      text-align: center;
+    }
+
+    .login-box label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .login-box input[type="text"],
+    .login-box input[type="password"] {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #1e88e5;
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .login-box button:hover {
+      background-color: #1669c1;
+    }
+
+    .login-box p {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 0.9rem;
     }
 
     footer {
@@ -53,29 +93,30 @@
       color: white;
       text-align: center;
       padding: 1rem;
-      margin-top: 3rem;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Welcome to LearnSphere</h1>
-    <p>Your one-stop Learning Management System to master in-demand skills.</p>
+    <h1>LearnSphere LMS</h1>
   </header>
 
-  <section>
-    <div class="highlight">
-      <h2>🚀 Start Learning SQL</h2>
-      <p><strong>SQL (Structured Query Language)</strong> is the language of data. From web apps to big data, SQL is used to store, retrieve, and manage information in databases. It's the perfect starting point for your tech journey!</p>
-      <ul>
-        <li>✅ Understand tables, rows, and columns</li>
-        <li>✅ Learn to write queries: SELECT, WHERE, JOIN</li>
-        <li>✅ Manipulate data using INSERT, UPDATE, DELETE</li>
-        <li>✅ Explore real-world projects and hands-on exercises</li>
-      </ul>
+  <main>
+    <div class="login-box">
+      <h2>Login to Your Account</h2>
+      <form action="/admin" method="post">
+        <label for="username">Username or Email</label>
+        <input type="text" id="username" name="username" required />
+
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required />
+
+        <button type="submit">Login</button>
+        <p>Don't have an account? <a href="#">Sign up</a></p>
+      </form>
     </div>
-  </section>
+  </main>
 
   <footer>
     &copy; 2025 LearnSphere. Empowering minds through learning.
