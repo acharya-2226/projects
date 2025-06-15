@@ -15,7 +15,7 @@ class Student(models.Model):
     ]
     full_name = models.CharField(max_length=200, null=False, blank=False, verbose_name="Student Full Name")
     email = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name="Student Email")
-    semester = models.Field(choices=SEMESTER, default='N/A', null=True, blank=True)
+    semester = models.Field(max_length=25, choices=SEMESTER, default='N/A', null=True, blank=True)
     phone_no = models.IntegerField(null=False, blank=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
@@ -43,7 +43,7 @@ class Teacher(models.Model):
         ]
     full_name = models.CharField(max_length=200, null=False, blank=False, verbose_name="Teacher Full Name")
     email = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name="Teacher Email")
-    department = models.Field(choices=DEPARTMENT, default='N/A', null=True, blank=True)
+    department = models.Field(max_length=25, choices=DEPARTMENT, default='N/A', null=True, blank=True)
     phone_no = models.IntegerField(null=False, blank=False)
     join_date = models.DateField(default='Join Date')
     user = models.OneToOneField(User, on_delete=models.CASCADE)
