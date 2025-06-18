@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %} Student | List {% endblock %}
+
+{% block content %}
+<section class="container p-5 mt-4"> 
+    <h1>Student List</h1>
+    <p><a href="{% url 'student.create' %}" class="btn btn-sm btn-primary">Add New Student</a></p>
+    
+    <table class ="table table-hover">
+        <thead>
+            <tr>
+                <th>S.No.</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th colspan="3">Action</th>
+            </tr>
+        </thead>
+        <tbody> 
+            {% for student in students %}
+            <tr>
+                <td> {{ forloop.counter }}</td>
+                <td> {{ student.full_name }}</td>
+                <td> {{ student.email }}</td>
+                <td> {{ student.phone_no }}</td>
+                <td><a href="#"> View</a></td>
+                <td><a href="#"> Edit</a></td>
+                <td><a href="#"> Delete</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

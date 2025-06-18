@@ -1,0 +1,86 @@
+/* Base CSS for LMS */@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* Root Design Tokens */
+:root {
+  --primary-color: #4a90e2;
+  --secondary-color: #50e3c2;
+  --background-color: #f5f7fa;
+  --text-color: #333;
+
+  --font-family: 'Poppins', sans-serif;
+  --font-size-small: 14px;
+  --font-size-base: 16px;
+  --font-size-large: 18px;
+
+  --heading-font-weight: 600;
+  --paragraph-font-weight: 400;
+
+  --link-color: #4a90e2;
+  --link-hover-color: #357ab8;
+
+  --button-background-color: #4a90e2;
+  --button-hover-background-color: #357ab8;
+  --button-text-color: #fff;
+  --button-border-radius: 4px;
+
+  --input-border-color: #ccc;
+  --input-focus-border-color: #4a90e2;
+}
+
+/* Global Base Styles */
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+/* Headings */
+h1 {
+  font-size: var(--font-size-large);
+  font-weight: var(--heading-font-weight);
+  color: var(--text-color);
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: calc(var(--font-size-large) - 2px);
+  font-weight: var(--heading-font-weight);
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+/* Paragraph */
+p {
+  font-size: var(--font-size-base);
+  font-weight: var(--paragraph-font-weight);
+  color: var(--text-color);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+/* Buttons */
+button,
+.btn {
+  background-color: var(--button-background-color);
+  color: var(--button-text-color);
+  border: none;
+  border-radius: var(--button-border-radius);
+  padding: 10px 15px;
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover,
+.btn:hover {
+  background-color: var(--button-hover-background-color);
+  transform: translateY(-1px);
+}
+
+button:active,
+.btn:active {
+  transform: scale(0.97);
+  transition: transform 0.1s ease;
+}

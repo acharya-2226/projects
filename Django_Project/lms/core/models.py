@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from datetime import datetime
 
 # Create your models here.
 
@@ -54,7 +55,8 @@ class Teacher(models.Model):
     email = models.CharField(max_length=100, unique=True, null=False, blank=False, verbose_name="teacher Email")
     department = models.CharField(max_length=20,choices=DEPARTMENT, default='N/A', null=True, blank=True)
     phone_no = models.IntegerField(null=False,blank=False)
-    join_data = models.DateField(default='Join Data')
+    import datetime
+    join_data = models.DateField(default=datetime.date.today)
     user = models.OneToOneField(User,on_delete=models.CASCADE)
 
     class Meta:
@@ -67,8 +69,9 @@ class Teacher(models.Model):
     
 class Assignment(models.Model):
     title = models.CharField(max_length=100,null=False,verbose_name='Assignment Title')
-    start_date = models.DateField(default='Start_Date',null=False,blank=False,verbose_name='Start_Date')
-    end_date = models.DateField(default='END_Date',null=False,blank=False,verbose_name='End_Date')
+    import datetime
+    start_date = models.DateField(default=datetime.date.today, null=False, blank=False, verbose_name='Start_Date')
+    end_date = models.DateField(default=datetime.date.today, null=False, blank=False, verbose_name='End_Date')
     question_file = models.FileField(upload_to='assignments/question/',null=True,blank=True,verbose_name='select_Assignment_file')
     question = models.TextField(null=True,blank=True,verbose_name='Assignment_Question')
     remark = models.CharField(max_length=100,null=False,blank=False,verbose_name='Assignment Details')
@@ -85,18 +88,20 @@ class Assignment(models.Model):
         return self.title
     
 class Material(models.Model):
-    MATERIALS=[
-        ('notes','Notes'),
-        ('video','Video'),
-        ('pdf','Pdf'),
-        ('ppt','Ppt'),
-        ]
+    MATERIALS = [
+        ('NOTES', 'Notes'),
+        ('VIDEO', 'Video'),
+        ('PDF', 'PDF'),
+        ('PPT', 'PowerPoint'),
+        ('AUDIO', 'Audio'),
+        ('IMAGE', 'Image'),
+        ('OTHER', 'Other'),
+    ]
 
     title = models.CharField(max_length=100,null=False,verbose_name='Material Title')
     category = models.CharField(max_length=20, choices=MATERIALS, null=False, blank=False, default='N\A',verbose_name='category')
     description = models.CharField(max_length=255,null=True,blank=True,verbose_name='Description of Material')
-
-    uploaded_date = models.DateField(default='Uploaded_Date',null=False,blank=False,verbose_name='Uploaded_Date')
+    upload_date = models.DateField(default=datetime.now(), null=False, blank=False, verbose_name='Upload_Date')
     teacher =models.ForeignKey(Teacher,on_delete=models.CASCADE,verbose_name='Uploaded By')
     subject =models.CharField(max_length=20, choices=SUBJECTS, default='N/A',verbose_name='Subject')
     file = models.FileField(upload_to='material',null=True,blank=True,verbose_name='select_file')
