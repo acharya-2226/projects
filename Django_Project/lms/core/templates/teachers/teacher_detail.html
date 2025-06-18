@@ -8,7 +8,5 @@
 <p><strong>Email:</strong> {{ teacher.email }}</p>
 <p><strong>Department:</strong> {{ teacher.department }}</p>
 <p><strong>Phone No:</strong> {{ teacher.phone_no }}</p>
-<p><strong>Join Date:</strong> {{ teacher.join_data }}</p>
+<p><strong>Join Date:</strong> {{ teacher.join_data|date:"F j, Y" }}</p>
 {% endblock %}
-
-{% block extra_js %}

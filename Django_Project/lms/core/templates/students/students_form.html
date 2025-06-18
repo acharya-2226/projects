@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+
 {% block content %}
-
-<form action="{% url 'student.create' %}" method="post" class="form">
-    {% csrf_token %}
-
-    {% bootstrap_form form %}
-
-    {% bootstrap_button button_type="submit" content="OK" %}
-    {% bootstrap_button button_type="reset" content="Cancel" %}
-</form>
-
+<div class="container mt-4">
+  <h2>Create Student</h2>
+  <form action="{% url 'student.create' %}" method="post" class="form">
+      {% csrf_token %}
+      {% bootstrap_form form %}
+      {% bootstrap_button button_type="submit" content="Submit" %}
+      {% bootstrap_button button_type="reset" content="Reset" %}
+  </form>
+</div>
 {% endblock %}
