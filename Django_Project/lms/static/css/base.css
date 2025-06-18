@@ -84,3 +84,30 @@ button:active,
   transform: scale(0.97);
   transition: transform 0.1s ease;
 }
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--link-hover-color);
+}
+
+/* Inputs */
+input,textarea {
+  border: 1px solid var(--input-border-color);
+  border-radius: var(--button-border-radius);
+  padding: 10px;
+  font-size: var(--font-size-base);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--input-focus-border-color);
+  outline: none;
+}
