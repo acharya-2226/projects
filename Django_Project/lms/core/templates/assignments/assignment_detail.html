@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ assignment.title }} - Assignment Details{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="container mt-4 mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}"><i class="fa-solid fa-home me-1"></i>Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'assignment.index' %}"><i class="fa-solid fa-user-graduate me-1"></i>Assignments</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ assignment.title }}</li>
+    </ol>
+</nav>
+
+<section class="assignment-profile-header bg-success text-white py-5 mb-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-white bg-opacity-25 rounded-circle d-flex align-items-center justify-content-center me-4" style="width: 100px; height: 100px;">
+                        <i class="fa-solid fa-file-alt text-white" style="font-size: 3rem;"></i>
+                    </div>
+                    <div>
+                        <h1 class="display-5 fw-bold mb-2">{{ assignment.title }}</h1>
+                        <p class="lead mb-1">
+                            <i class="fa-solid fa-book me-2"></i>
+                            {{ assignment.get_subject_display }}
+                        </p>
+                        <p class="mb-0">
+                            <i class="fa-solid fa-id-card me-2"></i>
+                            Assignment ID: #{{ assignment.id }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="d-flex gap-2 justify-content-lg-end">
+                    <a href="{% url 'assignment.edit' assignment.id %}" class="btn btn-light">
+                        <i class="fa-solid fa-edit me-2"></i>Edit Assignment
+                    </a>
+                    <a href="{% url 'assignment.delete' assignment.id %}" class="btn btn-outline-light">
+                        <i class="fa-solid fa-trash me-2"></i>Delete
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fa-solid fa-info-circle me-2 text-success"></i>
+                        Assignment Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Title</small>
+                            <strong>{{ assignment.title }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Subject</small>
+                            <strong>{{ assignment.get_subject_display }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Start Date</small>
+                            <strong>{{ assignment.start_date }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">End Date</small>
+                            <strong>{{ assignment.end_date }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Full Mark</small>
+                            <strong>{{ assignment.full_mark }}</strong>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <small class="text-muted d-block">Teacher</small>
+                            <strong>{{ assignment.teacher }}</strong>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <small class="text-muted d-block">Remark</small>
+                            <strong>{{ assignment.remark }}</strong>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <small class="text-muted d-block">Question</small>
+                            <div>{{ assignment.question|linebreaks }}</div>
+                        </div>
+                        <div class="col-md-12 mb-3">
+                            <small class="text-muted d-block">Assignment File</small>
+                            {% if assignment.question_file %}
+                                <a href="{{ assignment.question_file.url }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    <i class="fa-solid fa-download me-2"></i>Download File
+                                </a>
+                            {% else %}
+                                <span class="text-muted">No file uploaded</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="fa-solid fa-bolt me-2 text-success"></i>
+                        Quick Actions
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'assignment.edit' assignment.id %}" class="btn btn-outline-success">
+                            <i class="fa-solid fa-edit me-2"></i>Edit Assignment
+                        </a>
+                        <a href="{% url 'assignment.delete' assignment.id %}" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-trash me-2"></i>Delete Assignment
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Back to List Button -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'assignment.index' %}" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-2"></i>Back to Assignments List
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

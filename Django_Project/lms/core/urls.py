@@ -10,7 +10,17 @@ from core.views import (
    StudentListView,
    StudentDetailView,
    StudentDeleteView,
-   StudentUpdateView
+   StudentUpdateView,
+   AssignmentListView,
+   AssignmentCreateView,
+   AssignmentDetailView,
+   AssignmentUpdateView,
+   AssignmentDeleteView,
+   MaterialListView,
+   MaterialCreateView,
+   MaterialDetailView,
+   MaterialUpdateView,
+   MaterialDeleteView
 )
 
 urlpatterns = [
@@ -29,5 +39,21 @@ urlpatterns = [
    path('student/create/', StudentCreateView.as_view(), name='student.create'),
    path('student/<int:pk>/detail/', StudentDetailView.as_view(), name='student.detail'),
    path('student/<int:pk>/edit/', StudentUpdateView.as_view(), name='student.edit'),
-   path('student/<int:pk>/delete/', StudentDeleteView.as_view(), name='student.delete')
+   path('student/<int:pk>/delete/', StudentDeleteView.as_view(), name='student.delete'),
+
+
+   # Assignment URLs
+   path('assignment/list/', AssignmentListView.as_view(), name='assignment.index'),
+   path('assignment/create/', AssignmentCreateView.as_view(), name='assignment.create'),
+   path('assignment/<int:pk>/detail/', AssignmentDetailView.as_view(), name='assignment.detail'),
+   path('assignment/<int:pk>/edit/', AssignmentUpdateView.as_view(), name='assignment.edit'),
+   path('assignment/<int:pk>/delete/', AssignmentDeleteView.as_view(), name='assignment.delete'),
+
+   # Material URLs
+   path('material/list/', MaterialListView.as_view(), name='material.index'),
+   path('material/create/', MaterialCreateView.as_view(), name='material.create'),
+   path('material/<int:pk>/detail/', MaterialDetailView.as_view(), name='material.detail'),
+   path('material/<int:pk>/edit/', MaterialUpdateView.as_view(), name='material.edit'),
+   path('material/<int:pk>/delete/', MaterialDeleteView.as_view(), name='material.delete'),
+
 ]

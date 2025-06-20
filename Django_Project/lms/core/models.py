@@ -67,7 +67,7 @@ class Assignment(models.Model):
     remark = models.CharField(max_length=100, null=False, blank=False, verbose_name='Assignment Details')
     full_mark = models.FloatField(blank=False, null=False)
     teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, verbose_name='Uploaded By')
-    assignment_subject = models.CharField(max_length=20, choices=SUBJECT_CHOICES, default='N/A', verbose_name='Assignment Subject')
+    subject = models.CharField(max_length=20, choices=SUBJECT_CHOICES, default='N/A', verbose_name='Assignment Subject')
     
     class Meta:
         verbose_name = 'assignment'
