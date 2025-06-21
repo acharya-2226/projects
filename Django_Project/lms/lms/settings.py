@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'core',
     'django_bootstrap5',
     'accounts',
+    'lmsapi',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
